@@ -7,6 +7,7 @@ import ptBR from "date-fns/locale/pt-BR";
 
 export function Post(props) {
   const { author, publishedAt, content } = props;
+
   const [comments, setComments] = useState(["Post muito bacana, hein?!"]);
   const [newCommentText, setNewCommentText] = useState("");
 
@@ -24,7 +25,13 @@ export function Post(props) {
   });
 
   function handleNewCommentChange() {
+    event.target.setCustomValidity("");
+
     setNewCommentText(event.target.value);
+  }
+
+  function handleNewInvalidComment() {
+    event.target.setCustomValidity("Esse campo é obrigatório");
   }
 
   function handleCreateNewComment() {
@@ -33,6 +40,12 @@ export function Post(props) {
     setComments([...comments, newCommentText]);
 
     setNewCommentText("");
+  }
+
+  function deleteComment(comment) {
+    const commentsWithoutDeletedOne = comments.filter((c) => c !== comment);
+    setComments(commentsWithoutDeletedOne);
+    console.log(`Deletar comentário ${comment}`);
   }
 
   return (
@@ -75,16 +88,26 @@ export function Post(props) {
           name="comment"
           value={newCommentText}
           onChange={handleNewCommentChange}
+          required
+          onInvalid={handleNewInvalidComment}
         ></textarea>
 
         <footer>
-          <button type="submit">Enviar</button>
+          <button type="submit" disabled={!newCommentText.length}>
+            Enviar
+          </button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
         {comments.map((comment) => {
-          return <Comment key={comment} content={comment} />;
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          );
         })}
       </div>
     </article>
