@@ -7,7 +7,8 @@ import ptBR from "date-fns/locale/pt-BR";
 
 export function Post(props) {
   const { author, publishedAt, content } = props;
-  const [comments, setComments] = useState([1, 2]);
+  const [comments, setComments] = useState(["Post muito bacana, hein?!"]);
+  const [newCommentText, setNewCommentText] = useState("");
 
   const publishedAtFormated = format(
     publishedAt,
@@ -22,9 +23,16 @@ export function Post(props) {
     addSuffix: true,
   });
 
+  function handleNewCommentChange() {
+    setNewCommentText(event.target.value);
+  }
+
   function handleCreateNewComment() {
     event.preventDefault();
-    setComments([...comments, comments.length++]);
+
+    setComments([...comments, newCommentText]);
+
+    setNewCommentText("");
   }
 
   return (
@@ -45,10 +53,14 @@ export function Post(props) {
       <div className={styles.content}>
         {content.map((line) => {
           if (line.type === "paragraph") {
-            return <p key={line.content}>{line.content}</p>;
+            return (
+              <p key={line.content} content={line.content}>
+                {line.content}
+              </p>
+            );
           } else if (line.type === "link") {
             return (
-              <p key={line.content}>
+              <p key={line.content} content={line.content}>
                 <a href="#">{line.content}</a>
               </p>
             );
@@ -58,7 +70,12 @@ export function Post(props) {
 
       <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
-        <textarea placeholder="Deixe um comentário"></textarea>
+        <textarea
+          placeholder="Deixe um comentário"
+          name="comment"
+          value={newCommentText}
+          onChange={handleNewCommentChange}
+        ></textarea>
 
         <footer>
           <button type="submit">Enviar</button>
