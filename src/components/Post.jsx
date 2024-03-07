@@ -1,35 +1,52 @@
 import styles from "./Post.module.css";
 import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
+import { format, formatDistanceToNow } from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
 
-export function Post() {
+export function Post(props) {
+  const { author, publishedAt, content } = props;
+
+  const publishedAtFormated = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h' 'em' yyyy",
+    {
+      locale: ptBR,
+    }
+  );
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  });
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src="https://github.com/alvaropsouza.png" />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>Álvaro Souza</strong>
-            <span>Web Developer</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time title="11 de maio às 08:13h" dateTime={new Date().toString()}>
-          Publicado há 1h
+        <time title={publishedAtFormated} dateTime={publishedAt.toISOString()}>
+          {publishedDateRelativeToNow}
         </time>
       </header>
       <div className={styles.content}>
-        <p>Fala galeraa 👋 </p>
-        <p>Acabei de subir mais um projeto no meu portifa. É um</p>
-        projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é
-        DoctorCare 🚀
-        <p>
-          <a href="#">jane.design/doctorcare</a>
-        </p>
-        <p>
-          <a href="">#novoprojeto</a> <a href="">#rocketseat</a>{" "}
-          <a href="">#nlw </a>{" "}
-        </p>
+        {content.map((line) => {
+          if (line.type === "paragraph") {
+            return <p key={line.content}>{line.content}</p>;
+          } else if (line.type === "link") {
+            return (
+              <p key={line.content}>
+                <a href="#">{line.content}</a>
+              </p>
+            );
+          }
+        })}
       </div>
 
       <form className={styles.commentForm}>
