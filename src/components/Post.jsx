@@ -48,6 +48,8 @@ export function Post(props) {
     console.log(`Deletar comentário ${comment}`);
   }
 
+  const isNewCommentEmpty = newCommentText.length === 0;
+
   return (
     <article className={styles.post}>
       <header>
@@ -93,7 +95,7 @@ export function Post(props) {
         ></textarea>
 
         <footer>
-          <button type="submit" disabled={!newCommentText.length}>
+          <button type="submit" disabled={isNewCommentEmpty}>
             Enviar
           </button>
         </footer>
