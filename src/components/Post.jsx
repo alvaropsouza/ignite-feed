@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styles from "./Post.module.css";
 import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
@@ -6,6 +7,7 @@ import ptBR from "date-fns/locale/pt-BR";
 
 export function Post(props) {
   const { author, publishedAt, content } = props;
+  const [comments, setComments] = useState([1, 2]);
 
   const publishedAtFormated = format(
     publishedAt,
@@ -19,6 +21,11 @@ export function Post(props) {
     locale: ptBR,
     addSuffix: true,
   });
+
+  function handleCreateNewComment() {
+    event.preventDefault();
+    setComments([...comments, comments.length++]);
+  }
 
   return (
     <article className={styles.post}>
@@ -38,10 +45,10 @@ export function Post(props) {
       <div className={styles.content}>
         {content.map((line) => {
           if (line.type === "paragraph") {
-            return <p>{line.content}</p>;
+            return <p key={line.content}>{line.content}</p>;
           } else if (line.type === "link") {
             return (
-              <p>
+              <p key={line.content}>
                 <a href="#">{line.content}</a>
               </p>
             );
@@ -49,7 +56,7 @@ export function Post(props) {
         })}
       </div>
 
-      <form className={styles.commentForm}>
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
         <textarea placeholder="Deixe um comentário"></textarea>
 
@@ -59,9 +66,9 @@ export function Post(props) {
       </form>
 
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map((comment) => {
+          return <Comment key={comment} content={comment} />;
+        })}
       </div>
     </article>
   );
