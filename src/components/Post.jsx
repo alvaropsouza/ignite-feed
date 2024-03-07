@@ -38,10 +38,10 @@ export function Post(props) {
       <div className={styles.content}>
         {content.map((line) => {
           if (line.type === "paragraph") {
-            return <p key={line.content}>{line.content}</p>;
+            return <p>{line.content}</p>;
           } else if (line.type === "link") {
             return (
-              <p key={line.content}>
+              <p>
                 <a href="#">{line.content}</a>
               </p>
             );
